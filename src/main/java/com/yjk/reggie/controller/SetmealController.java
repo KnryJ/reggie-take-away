@@ -16,6 +16,8 @@ import com.yjk.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +45,7 @@ public class SetmealController {
      * @param setmealDto
      * @return
      */
+    @CacheEvict(value = "setmealCache", allEntries = true)
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info("套餐信息:{}", setmealDto);
@@ -51,6 +54,13 @@ public class SetmealController {
         return R.success("新增套餐成功");
     }
 
+    /**
+     * 分页
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(Integer page, Integer pageSize, String name){
         Page<Setmeal> pageInfo = new Page<>(page, pageSize);
@@ -89,6 +99,7 @@ public class SetmealController {
      * @param ids
      * @return
      */
+    @CacheEvict(value = "setmealCache", allEntries = true)
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids {}", ids);
@@ -113,6 +124,7 @@ public class SetmealController {
      * 修改套餐
      * @return
      */
+    @CacheEvict(value = "setmealCache", allEntries = true)
     @PutMapping
     public R<String> update(@RequestBody SetmealDto setmealDto){
         setmealService.updateWithDish(setmealDto);
@@ -149,6 +161,7 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/list")
+    @Cacheable(value = "setmealCache", key = "#setmeal.categoryId + '_' + #setmeal.status")
     public R<List<Setmeal>> list(Setmeal setmeal){
 
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
@@ -166,14 +179,14 @@ public class SetmealController {
      * 移动端点击套餐图片查看套餐具体内容
      * 这里返回的是dto 对象，因为前端需要copies这个属性
      * 前端主要要展示的信息是:套餐中菜品的基本信息，图片，菜品描述，以及菜品的份数
-     * @param SetmealId
+     * @param setmealId
      * @return
      */
-    //这里前端是使用路径来传值的，要注意，不然你前端的请求都接收不到，就有点尴尬哈
+    @Cacheable(value = "setmealDetailCache", key = "#setmealId")
     @GetMapping("/dish/{id}")
-    public R<List<DishDto>> dish(@PathVariable("id") Long SetmealId){
+    public R<List<DishDto>> dish(@PathVariable("id") Long setmealId){
         LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SetmealDish::getSetmealId,SetmealId);
+        queryWrapper.eq(SetmealDish::getSetmealId,setmealId);
         //获取套餐里面的所有菜品  这个就是SetmealDish表里面的数据
         List<SetmealDish> list = setmealDishService.list(queryWrapper);
 
