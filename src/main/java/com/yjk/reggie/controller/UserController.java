@@ -49,9 +49,9 @@ public class UserController {
             log.info("code: {}", code);
 
             //调用腾讯云短信服务
-//            String[] templateParamSet = new String[]{code};
-//            String[] phoneNumberSet = new String[]{phone};
-//            SMSUtils.sendMessage("Fan食代", "1501706", templateParamSet, phoneNumberSet);
+            String[] templateParamSet = new String[]{code};
+            String[] phoneNumberSet = new String[]{phone};
+            SMSUtils.sendMessage("Fan食代", "1501706", templateParamSet, phoneNumberSet);
 
             String codeAndPhone = code + " " + phone;
             //需要将生成的验证码保存起来 Session
