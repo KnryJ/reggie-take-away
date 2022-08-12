@@ -45,8 +45,7 @@ public class UserController {
         if(StringUtils.isNotEmpty(phone)){
 
             //生成随机验证码
-            String code = ValidateCodeUtils.generateValidateCode(6
-            ).toString();
+            String code = ValidateCodeUtils.generateValidateCode(6).toString();
             log.info("code: {}", code);
 
             //调用腾讯云短信服务
