@@ -57,7 +57,7 @@ public class DishController {
 //        redisTemplate.delete(keys);
 
         //精确清理
-        String key = "dish_" + dishDto.getCategoryId() + "_1";
+        String key = "dish_" + dishDto.getCategoryId();
         redisTemplate.delete(key);
 
         return R.success("新增菜品成功");
@@ -135,7 +135,7 @@ public class DishController {
 //        redisTemplate.delete(keys);
 
         //精确清理
-        String key = "dish_" + dishDto.getCategoryId() + "_1";
+        String key = "dish_" + dishDto.getCategoryId();
         redisTemplate.delete(key);
 
         return R.success("修改菜品成功");
@@ -171,7 +171,7 @@ public class DishController {
 
         List<DishDto> dishDtoList =null;
         //动态构造 key
-        String key = "dish_" + dish.getCategoryId() + "_" + dish.getStatus();
+        String key = "dish_" + dish.getCategoryId();
 
         //先从 redis 中获取缓存数据
         dishDtoList = (List<DishDto>) redisTemplate.opsForValue().get(key);
